@@ -1,0 +1,201 @@
+<div class=""  >
+  <div class=" card" >
+    <br>
+    <h4 class="center-align">Edit Account Details</h4>
+    <p class="center-align flow-text">
+      Joined: <%= Timex.from_now(NaiveDateTime.to_erl(@user.inserted_at)) %>
+
+    </p>
+
+    <form action="/users/update/<%= @user.zid %>" method="POST" class="col s12" >
+      <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
+      <input type="hidden" name="upload_preset" value= "crt1o1eb">
+
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input type="text" name="name" class="validate" value="<%=@user.name%>">
+                        <label for="icon_prefix">Name</label>
+                      </div>
+
+                      <div class="input-field col s6">
+                        <i class="material-icons prefix">email</i>
+                        <input type="email" name="email" class="validate" value="<%=@user.email%>">
+                        <label for="icon_prefix">Email</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <i class="material-icons prefix">date_range</i>
+
+                        <input type="text" name="dob" class="validate" value="<%=@user.details["dob"]%>" placeholder="27-09-1123">
+
+
+                        <label for="icon_prefix">Date of Birth</label>
+                      </div>
+
+                      <div class="input-field col s6">
+                        <i class="material-icons prefix">location_on</i>
+                        <input type="text" name="address" class="validate" value="<%=@user.address%>">
+                        <label for="icon_prefix">Address</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s6">
+                        <i class="material-icons prefix">work</i>
+
+                        <input type="text" name="work" class="validate" value="<%=@user.details["work"]%>" >
+
+
+                        <label for="icon_prefix">Work</label>
+                      </div>
+
+                      <div class="input-field col s6">
+
+                        <i class="material-icons prefix">favorite</i>
+                        <input type="text" name="hobbies" class="validate" value="<%=@user.details["hobbies"]%>" >
+                        <label for="icon_prefix">Hobbies</label>
+                      </div>
+                    </div>
+
+
+                    <div class="row">
+
+                      <div class="input-field col s6">
+                            <i class="material-icons prefix">lock</i>
+                        <select name="profile_privacy">
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="private">Private</option>
+                          <option value="public">Public</option>
+                        </select>
+                        <label>Profile Privacy</label>
+                       </div>
+
+                    </div>
+
+
+
+                    <div class="row">
+
+
+                       <div class="file-field input-field col s6">
+                         <input class="file-path validate" type="text">
+                         <div class="btn">
+                           <input type="file" id= "pr_image" name= "pr_image" value="<%=@user.details["profile_image"]%>">
+                           <span>Profile Image </span>
+
+                         </div>
+                         <img id="uploaded_profile">
+                         <div id="results_profile"></div>
+                       </div>
+
+
+                       <div class="file-field input-field col s6">
+                         <input class="file-path validate" type="text">
+                         <div class="btn">
+                           <input type="file" id= "background_image" name= "background_image" value="<%=@user.details["bg_image"]%>">
+                           <span>Background Image </span>
+
+                         </div>
+                         <img id="uploaded">
+                         <div id="results"></div>
+                       </div>
+                    </div>
+
+
+
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <textarea id="bio" name="bio" class="materialize-textarea" value ="<%=@user.bio%>" length="120"></textarea>
+                        <label for="bio">Bio</label>
+                      <span class="character-counter" style="float: right; font-size: 12px; height: 1px;"></span></div>
+
+                    </div>
+                    <br/>
+                    <input type="hidden" id="bg_image"  name="bg_image">
+                    <input type="hidden" id="profile_image"  name="profile_image">
+
+                    <p class="center-align">
+                      <button class="btn-large" type="submit">SAVE</button>
+                    </p>
+                  </br>
+
+                  </form>
+
+
+
+
+
+<form action="" method="post" enctype="multipart/form-data" onsubmit="AJAXSubmit(this); return false;">
+  <fieldset>
+    <legend>Background Image</legend>
+
+    <p>
+       <input type="hidden" name="upload_preset" value= "crt1o1eb">
+    <p>
+      <label >Select your photo:
+      <input type="file" name="file"></label>
+    </p>
+
+    <p>
+      <input type="submit" value="Submit" />
+    </p>
+
+  </fieldset>
+</form>
+
+<form action="" method="post" enctype="multipart/form-data" onsubmit="pAJAXSubmit(this); return false;">
+  <fieldset>
+    <legend> Profile Image</legend>
+
+    <p>
+       <input type="hidden" name="upload_preset" value= "crt1o1eb">
+    <p>
+      <label >Select your photo:
+      <input type="file" name="file"></label>
+    </p>
+
+    <p>
+      <input type="submit" value="Submit" />
+    </p>
+
+  </fieldset>
+</form>
+
+<script>
+window.ajaxSuccess = function () {
+	response = JSON.parse(this.responseText);
+  console.log("ajaxSuccess", typeof this.responseText);
+  document.getElementById('uploaded').setAttribute("src", response["secure_url"]);
+  document.getElementById('background_image').setAttribute("value", response["secure_url"]);
+  document.getElementById('bg_image').setAttribute("value", response["secure_url"]);
+  document.getElementById('results').innerText = this.responseText;
+
+}
+
+window.AJAXSubmit = function (formElement) {
+  console.log("starting AJAXSubmit");
+  if (!formElement.action) { return; }
+  var xhr = new XMLHttpRequest();
+  xhr.onload = ajaxSuccess;
+  xhr.open("post", "https://api.cloudinary.com/v1_1/dc6zvehph/image/upload");
+  xhr.send(new FormData(formElement));
+}
+window.pajaxSuccess = function () {
+	response = JSON.parse(this.responseText);
+  console.log("pajaxSuccess", typeof this.responseText);
+  document.getElementById('uploaded_profile').setAttribute("src", response["secure_url"]);
+  document.getElementById('profile_image').setAttribute("value", response["secure_url"]);
+  document.getElementById('results_profile').innerText = this.responseText;
+
+}
+
+window.pAJAXSubmit = function (formElement) {
+  console.log("starting AJAXSubmit");
+  if (!formElement.action) { return; }
+  var xhr = new XMLHttpRequest();
+  xhr.onload = pajaxSuccess;
+  xhr.open("post", "https://api.cloudinary.com/v1_1/dc6zvehph/image/upload");
+  xhr.send(new FormData(formElement));
+}
+</script>

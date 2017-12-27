@@ -1,0 +1,51 @@
+<div class="white card-panel hoverable" style="border-radius:10px; padding:20px;" >
+  <div class="row" style="padding-left:20px;">
+    <div class="col s12 center">
+      <h2><%= @post.title %></h2>
+      <br/>
+    </div>
+    <br/>
+    <div class="col s12" style="overflow:hidden">
+        <span><%= raw @post.body %></span>
+        <br/>
+        <br/>
+    </div>
+
+    <div class="col s12">
+      <p> Author: <%= @post.author %></p>
+      <p> Word Count: <%= @post.word_count %></p>
+      <br/>
+      <br/>
+    </div>
+    <div class="col s12" style="border-radius:10px; padding-top:10px">
+
+    <form method="post" action="/posts/<%=@post.id%>">
+      <input type="hidden" name="post[likes]" value="1"/>
+      <input type="hidden" name="id" value="<%= @post.id %>"/>
+      <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>"/>
+      <button class="submit btn-flat">
+        <%= if @post.likes != nil do %>
+          <%= @post.likes %> people like this
+        <% end %>
+        <label class="fancy-checkbox" style="font-size:25px;">
+          <input type="checkbox" />
+          <i class="fa fa-fw fa-thumbs-up unchecked"></i>
+          <i class="fa fa-fw fa-thumbs-o-up checked"></i>
+          Like
+        </label>
+      </button>
+     </form>
+
+    <%= render Blog.CommentView, "new.html",
+    				conn: @conn,
+    				post: @post,
+    				comment_changeset: @comment_changeset %>
+
+    <%= for comment <- @post.comments do %>
+    	<p class="card-panel hoverable"><%= comment.body %> </p>
+    <% end %>
+    </div>
+    <span><%= link "Edit", to: post_path(@conn, :edit, @post), class: "btn"%></span>
+    <span><%= link "Back", to: post_path(@conn, :index), class: "btn pink A400" %></span>
+    </div>
+</div>

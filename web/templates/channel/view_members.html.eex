@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="col s12">
+    <h4 class="center-align"><%= @channel.name %> Member's</h4>
+    <form method="GET" action="/channels/members/search/<%=@channel.id%>">
+      <div class="row">
+        <div class="input-field col s10">
+          <i class="material-icons prefix">search</i>
+          <input type="search" name="name" placeholder="Search">
+        </div>
+      </div>
+    </form>
+    <div class="container">
+
+      <!-- Trigger the modal with a button -->
+
+      <!-- Modal -->
+      <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Create Channel</h4>
+            </div>
+            <div class="modal-body">
+
+            <form class="form" method="POST" action="/channels/create">
+
+              <div class="content">
+
+                <div class="row">
+               <div class="input-field col s6">
+               <i class="material-icons  prefix">title</i>
+                 <input  id="name" name="name" type="text" class="validate" placeholder="Channel Name">
+                 <label for="name">Name</label>
+               </div>
+
+            <div class="input-field col s6">
+              <i class="material-icons  prefix">lock</i>
+              <select>
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+              </select>
+
+                <label for="sel1">Privacy Type</label>
+            </div>
+          </div>
+                    <div class="input-field col s12">
+                      <textarea id="summary" name="summary" class="materialize-textarea"></textarea>
+                      <label for="summary">Summary</label>
+                    </div>
+              </div>
+              <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
+
+              <div class="modal-footer">
+                <button class="btn-large waves-effect waves-light btn btn-simple btn-primary btn-lg" type="submit" name="submit">
+                  CREATE YOUR Channel &rarr;
+                </button>    </div>
+              </div>
+
+          </div>
+
+        </form>
+            </div>
+
+        </div>
+      </div>
+
+    </div>
+    <!-- collection of customers -->
+  <%= for member <- @members do %>
+    <ul class="collection">
+      <li class="collection-item avatar">
+        <div style=" background-color:red;" alt="" class="circle"> </div>
+
+          <span class="title"><a href="/users/profile/<%=member.zid%>"><%= member.name%></a>
+
+        </span>
+         <p>
+
+          Joined: <%= Timex.from_now(NaiveDateTime.to_erl(member.inserted_at)) %>
+
+         </p>
+         <a href="/channels/members/<%= @channel.id%>/<%= member.id%>" class="secondary-content"><i class="material-icons">delete</i></a>
+
+
+      </li>
+    </ul>
+  <% end %>
+  </div>
+</div>
+
+<!-- add button -->
+<div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+  <a href="#" class="btn-floating btn-large waves-effect waves-light green" data-toggle="modal" data-target="#myModal"><i class="material-icons">add</i></a>
+
+</div>
